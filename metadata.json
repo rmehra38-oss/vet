@@ -1,0 +1,6 @@
+{
+  "name": "Vetconnect Online",
+  "description": "Modern veterinary teleconsultation and pet care platform for Indian pet owners and livestock farmers, featuring video consultations, diet plans, and care management.",
+  "requestFramePermissions": ["camera", "microphone"],
+  "majorCapabilities": []
+}

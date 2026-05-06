@@ -1,0 +1,78 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile for owners and veterinarians",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string" },
+        "displayName": { "type": "string" },
+        "role": { "type": "string", "enum": ["owner", "vet", "admin"] },
+        "photoURL": { "type": "string" },
+        "phoneNumber": { "type": "string" },
+        "specialization": { "type": "string", "description": "For vets: expertise areas" },
+        "experience": { "type": "number", "description": "For vets: years of practice" },
+        "location": { "type": "string" },
+        "isVerified": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email", "role"]
+    },
+    "Animal": {
+      "title": "Animal",
+      "description": "Pet or Livestock profile",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "ownerId": { "type": "string" },
+        "name": { "type": "string" },
+        "species": { "type": "string", "enum": ["dog", "cat", "cow", "buffalo", "horse", "goat", "poultry", "exotic"] },
+        "breed": { "type": "string" },
+        "age": { "type": "number" },
+        "weight": { "type": "number" },
+        "gender": { "type": "string" },
+        "photoURL": { "type": "string" },
+        "isLivestock": { "type": "boolean" },
+        "lastVaccination": { "type": "string", "format": "date-time" },
+        "nextVaccination": { "type": "string", "format": "date-time" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["ownerId", "name", "species"]
+    },
+    "Appointment": {
+      "title": "Appointment",
+      "description": "Teleconsultation session",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "ownerId": { "type": "string" },
+        "vetId": { "type": "string" },
+        "animalId": { "type": "string" },
+        "type": { "type": "string", "enum": ["chat", "audio", "video"] },
+        "status": { "type": "string", "enum": ["pending", "confirmed", "completed", "cancelled"] },
+        "scheduledAt": { "type": "string", "format": "date-time" },
+        "symptoms": { "type": "string" },
+        "prescriptions": { "type": "array", "items": { "type": "string" } },
+        "paymentId": { "type": "string" },
+        "amount": { "type": "number" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["ownerId", "vetId", "animalId", "type", "status"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profiles"
+    },
+    "/animals/{animalId}": {
+      "schema": "Animal",
+      "description": "Animal profiles owned by users"
+    },
+    "/appointments/{appointmentId}": {
+      "schema": "Appointment",
+      "description": "Consultation appointments"
+    }
+  }
+}
