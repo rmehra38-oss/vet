@@ -6,14 +6,17 @@ import { cn } from '../lib/utils';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
 
   const navLinks = [
     { name: 'Services', href: '/#services' },
     { name: 'Livestock', href: '/#livestock' },
     { name: 'Marketplace', href: '/marketplace' },
     { name: 'Diet Plans', href: '/diet' },
+    { name: 'For Vets', href: '/login?role=vet' },
   ];
+
+  const dashboardPath = profile?.role === 'vet' ? '/vet/dashboard' : '/dashboard';
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-brand-teal/10">
@@ -40,7 +43,7 @@ export default function Navbar() {
               Emergency Vet
             </Link>
             {user ? (
-              <Link to="/dashboard" className="btn-primary py-2 px-4 text-xs">
+              <Link to={dashboardPath} className="btn-primary py-2 px-4 text-xs">
                 Dashboard
               </Link>
             ) : (
@@ -72,7 +75,7 @@ export default function Navbar() {
             Emergency
           </Link>
           <div className="pt-2">
-            <Link to={user ? "/dashboard" : "/login"} onClick={() => setIsOpen(false)} className="btn-primary w-full">
+            <Link to={user ? dashboardPath : "/login"} onClick={() => setIsOpen(false)} className="btn-primary w-full">
               {user ? "Dashboard" : "Login / Register"}
             </Link>
           </div>

@@ -40,8 +40,19 @@ export default function Home() {
   return (
     <div className="space-y-32 pb-32">
       {/* Hero Section */}
-      <section className="relative px-4 sm:px-6 lg:px-8 py-16 lg:py-24 overflow-hidden bg-white border-b border-slate-200">
-        <div className="max-w-7xl mx-auto grid lg:grid-cols-12 gap-12 items-center">
+      <section className="relative px-4 sm:px-6 lg:px-8 py-16 lg:py-24 overflow-hidden border-b border-slate-200">
+        {/* Background Image with Overlay */}
+        <div className="absolute inset-0 z-0">
+          <img 
+            src="https://images.unsplash.com/photo-1584132967334-10e028bd69f7?q=80&w=2000&auto=format&fit=crop" 
+            alt="Veterinary Background" 
+            className="w-full h-full object-cover opacity-[0.03] grayscale"
+            referrerPolicy="no-referrer"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-white via-white/80 to-white" />
+        </div>
+
+        <div className="max-w-7xl mx-auto grid lg:grid-cols-12 gap-12 items-center relative z-10">
           <motion.div 
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -193,22 +204,22 @@ export default function Home() {
                        { 
                          title: 'Digital Prescriptions', 
                          desc: 'Downloadable via the App', 
-                         image: 'https://images.unsplash.com/photo-1576091160550-217359f4ecf8?q=80&w=100&h=100&auto=format&fit=crop' 
+                         image: '/src/assets/images/regenerated_image_1778087699891.png' 
                        },
                        { 
                          title: 'Diet & Nutrition Plans', 
                          desc: 'Tailored for specific breeds', 
-                         image: 'https://images.unsplash.com/photo-1589923188900-85dae523342b?q=80&w=100&h=100&auto=format&fit=crop' 
+                         image: '/src/assets/images/regenerated_image_1778087704771.png' 
                        },
                        { 
                          title: 'Vaccination Tracker', 
                          desc: 'Automated Reminders', 
-                         image: 'https://images.unsplash.com/photo-1628033036243-690fc1e5824e?q=80&w=100&h=100&auto=format&fit=crop' 
+                         image: '/src/assets/images/regenerated_image_1778087714977.png' 
                        },
                        { 
                          title: 'WhatsApp Consultation', 
                          desc: 'Quick 24/7 support channel', 
-                         image: 'https://images.unsplash.com/photo-1611746872915-64382b5c76da?q=80&w=100&h=100&auto=format&fit=crop' 
+                         image: '/src/assets/images/regenerated_image_1778087709372.png' 
                        },
                     ].map((item, idx) => (
                        <div key={item.title} className="p-4 bg-slate-50 rounded-xl flex items-center gap-4 border border-slate-100 transition-colors hover:bg-slate-100">
@@ -275,6 +286,72 @@ export default function Home() {
            </div>
         </div>
       </section>
+      {/* Vet Section */}
+      <section className="bg-brand-green/30 py-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+           <div className="bg-white rounded-[3rem] p-8 lg:p-16 border border-brand-green-accent/20 shadow-xl overflow-hidden relative">
+              <div className="absolute top-0 right-0 w-96 h-96 bg-brand-green/20 rounded-full translate-x-20 -translate-y-20 blur-3xl" />
+              <div className="relative z-10 grid lg:grid-cols-2 gap-12 items-center">
+                 <div className="space-y-8">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-brand-teal text-white rounded-full text-[10px] font-bold uppercase tracking-widest">
+                       For Veterinarians
+                    </div>
+                    <h2 className="text-4xl lg:text-5xl font-bold text-brand-teal leading-tight">
+                       Empowering India's <span className="italic">Animal Doctors.</span>
+                    </h2>
+                    <p className="text-lg text-slate-600 leading-relaxed">
+                       Join our network of 12,000+ verified professionals. Expand your practice, 
+                       manage appointments digitally, and consult from anywhere.
+                    </p>
+                    <div className="flex flex-col sm:flex-row gap-4">
+                       <Link to="/login?role=vet" className="btn-primary py-4 px-8 bg-brand-teal hover:bg-brand-teal-light">
+                          Register as a Veterinarian
+                       </Link>
+                       <Link to="/login?role=vet" className="btn-secondary py-4 px-8">
+                          Learn More
+                       </Link>
+                    </div>
+                    <div className="grid grid-cols-2 gap-8 pt-8 border-t border-slate-100">
+                       <div className="flex items-center gap-3">
+                          <CheckCircle className="text-brand-teal-light" size={20} />
+                          <span className="text-sm font-bold">Verified Leads</span>
+                       </div>
+                       <div className="flex items-center gap-3">
+                          <CheckCircle className="text-brand-teal-light" size={20} />
+                          <span className="text-sm font-bold">Instant Payments</span>
+                       </div>
+                    </div>
+                 </div>
+                 <div className="hidden lg:block relative">
+                    <div className="aspect-square bg-brand-teal/5 rounded-[4rem] flex items-center justify-center p-12">
+                       <div className="w-full h-full bg-white rounded-3xl shadow-2xl border border-slate-100 p-8 space-y-6">
+                          <div className="flex items-center justify-between">
+                             <div className="flex items-center gap-3">
+                                <div className="w-12 h-12 bg-slate-100 rounded-full animate-pulse" />
+                                <div className="space-y-1">
+                                   <div className="h-3 bg-slate-200 rounded-full w-24" />
+                                   <div className="h-2 bg-slate-100 rounded-full w-12" />
+                                </div>
+                             </div>
+                             <div className="w-10 h-10 bg-brand-green rounded-xl" />
+                          </div>
+                          <div className="space-y-3">
+                             <div className="h-2 bg-slate-50 rounded-full w-full" />
+                             <div className="h-2 bg-slate-50 rounded-full w-5/6" />
+                             <div className="h-2 bg-slate-50 rounded-full w-4/6" />
+                          </div>
+                          <div className="pt-4 flex gap-2">
+                             <div className="h-10 bg-brand-teal rounded-xl flex-grow" />
+                             <div className="h-10 bg-slate-100 rounded-xl flex-grow" />
+                          </div>
+                       </div>
+                    </div>
+                 </div>
+              </div>
+           </div>
+        </div>
+      </section>
+
       {/* Pricing Section */}
       <section id="pricing" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center space-y-4 mb-20">

@@ -1,16 +1,51 @@
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../lib/AuthContext';
 import { db, handleFirestoreError, OperationType } from '../lib/firebase';
 import { collection, query, where, onSnapshot, updateDoc, doc, getDoc } from 'firebase/firestore';
 import { Users, Calendar, DollarSign, FileText, CheckCircle, XCircle, Clock, ChevronRight, Activity, Search, Plus } from 'lucide-react';
 import { cn, formatDate } from '../lib/utils';
+import React from 'react';
 
 export default function VetDashboard() {
   const { user, profile } = useAuth();
   const [appointments, setAppointments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showProfileModal, setShowProfileModal] = useState(false);
+  const [profileData, setProfileData] = useState({
+    specialization: '',
+    experience: ''
+  });
+  const [savingProfile, setSavingProfile] = useState(false);
+
+  const isProfileIncomplete = !profile?.specialization || !profile?.experience;
+
+  useEffect(() => {
+    if (profile) {
+      setProfileData({
+        specialization: profile.specialization || '',
+        experience: profile.experience?.toString() || ''
+      });
+    }
+  }, [profile]);
+
+  const handleUpdateProfile = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user) return;
+    setSavingProfile(true);
+    try {
+      await updateDoc(doc(db, 'users', user.uid), {
+        specialization: profileData.specialization,
+        experience: Number(profileData.experience)
+      });
+      setShowProfileModal(false);
+    } catch (error) {
+      handleFirestoreError(error, OperationType.UPDATE, `users/${user.uid}`);
+    } finally {
+      setSavingProfile(false);
+    }
+  };
 
   useEffect(() => {
     if (!user) return;
@@ -101,6 +136,30 @@ export default function VetDashboard() {
         </div>
       </header>
 
+      {isProfileIncomplete && (
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-brand-teal/5 border border-brand-teal/10 p-6 rounded-[2rem] flex flex-col md:flex-row items-center justify-between gap-6"
+        >
+          <div className="flex items-center gap-4 text-center md:text-left">
+            <div className="w-12 h-12 bg-brand-green rounded-2xl flex items-center justify-center text-brand-teal shrink-0">
+               <FileText size={24} />
+            </div>
+            <div>
+              <h4 className="font-bold text-brand-teal">Complete Your Clinical Profile</h4>
+              <p className="text-sm text-brand-teal/60">Add your specialization and experience to help owners find the right care.</p>
+            </div>
+          </div>
+          <button 
+            onClick={() => setShowProfileModal(true)}
+            className="btn-primary px-8 py-3 whitespace-nowrap"
+          >
+            Update Profile
+          </button>
+        </motion.div>
+      )}
+
       {/* Stats Grid */}
       <section className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat) => (
@@ -109,8 +168,8 @@ export default function VetDashboard() {
               <stat.icon size={28} />
             </div>
             <div>
-              <div className="text-2xl font-bold font-sans text-brand-teal">{stat.value}</div>
-              <div className="text-xs text-brand-teal/40 uppercase font-bold tracking-wider">{stat.label}</div>
+              <div className="text-2xl font-bold font-sans text-brand-teal" aria-label={`${stat.label} count`}>{stat.value}</div>
+              <div className="text-xs text-brand-teal/40 uppercase font-bold tracking-wider" aria-label="statistic category">{stat.label}</div>
             </div>
           </div>
         ))}
@@ -237,6 +296,72 @@ export default function VetDashboard() {
            </section>
         </div>
       </div>
+
+      {/* Profile Update Modal */}
+      <AnimatePresence>
+        {showProfileModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-white rounded-[2rem] p-8 max-w-md w-full shadow-2xl space-y-6"
+            >
+              <div className="flex justify-between items-center">
+                <h3 className="text-2xl font-bold font-sans">Clinical Profile</h3>
+                <button onClick={() => setShowProfileModal(false)} className="p-2 hover:bg-slate-100 rounded-full transition-colors">
+                  <XCircle className="text-slate-400" size={24} />
+                </button>
+              </div>
+
+              <form onSubmit={handleUpdateProfile} className="space-y-6">
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-slate-400 uppercase tracking-widest px-1">Primary Specialization</label>
+                  <input 
+                    required
+                    type="text" 
+                    value={profileData.specialization}
+                    onChange={e => setProfileData({...profileData, specialization: e.target.value})}
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:border-brand-teal focus:ring-0"
+                    placeholder="e.g. Large Animal Medicine, Surgery"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-slate-400 uppercase tracking-widest px-1">Years of Experience</label>
+                  <input 
+                    required
+                    type="number"
+                    min="0"
+                    max="60"
+                    value={profileData.experience}
+                    onChange={e => setProfileData({...profileData, experience: e.target.value})}
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:border-brand-teal focus:ring-0"
+                    placeholder="Number of years"
+                  />
+                </div>
+
+                <div className="flex gap-4 pt-4">
+                  <button 
+                    type="button"
+                    onClick={() => setShowProfileModal(false)}
+                    className="flex-grow py-4 bg-slate-100 text-slate-600 rounded-2xl font-bold hover:bg-slate-200 transition-all"
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    type="submit"
+                    disabled={savingProfile}
+                    className="flex-grow py-4 bg-brand-teal text-white rounded-2xl font-bold hover:bg-brand-teal-light transition-all shadow-lg shadow-brand-teal/20 disabled:opacity-50"
+                  >
+                    {savingProfile ? 'Saving...' : 'Save Profile'}
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

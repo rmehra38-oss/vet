@@ -6,6 +6,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './lib/AuthContext';
 import Layout from './components/Layout';
+import ScrollToHash from './components/ScrollToHash';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
@@ -23,6 +24,7 @@ export default function App() {
   return (
     <AuthProvider>
       <Router>
+        <ScrollToHash />
         <Layout>
           <Routes>
             <Route path="/" element={<Home />} />

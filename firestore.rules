@@ -26,11 +26,11 @@ service cloud.firestore {
 
     // Animal Rules
     match /animals/{animalId} {
-      allow get: if isSignedIn(); // Potential for public view if needed, but let's restrict for privacy
+      allow get: if isSignedIn();
       allow list: if isSignedIn() && resource.data.ownerId == request.auth.uid;
       allow create: if isSignedIn() && isOwner(incoming().ownerId) && isValidId(animalId);
       allow update: if isSignedIn() && isOwner(existing().ownerId) && 
-                      incoming().diff(existing()).affectedKeys().hasOnly(['name', 'weight', 'age', 'photoURL', 'lastVaccination', 'nextVaccination']);
+                      incoming().diff(existing()).affectedKeys().hasOnly(['name', 'weight', 'age', 'image', 'lastVaccination', 'nextVaccination']);
       allow delete: if isSignedIn() && isOwner(existing().ownerId);
     }
 
@@ -44,8 +44,7 @@ service cloud.firestore {
       allow list: if isSignedIn() && (resource.data.ownerId == request.auth.uid || resource.data.vetId == request.auth.uid);
       allow create: if isSignedIn() && isOwner(incoming().ownerId);
       allow update: if isParticipant() && 
-                      incoming().diff(existing()).affectedKeys().hasAll(['callStatus', 'callChannelId']) ||
-                      incoming().diff(existing()).affectedKeys().hasOnly(['status', 'prescriptions', 'scheduledAt', 'callStatus', 'callChannelId']);
+                      incoming().diff(existing()).affectedKeys().hasOnly(['status', 'prescriptions', 'scheduledAt', 'callStatus', 'callChannelId', 'paymentStatus', 'paymentId']);
     }
   }
 }

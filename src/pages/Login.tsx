@@ -1,15 +1,24 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 import { auth, db } from '../lib/firebase';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { motion } from 'framer-motion';
-import { HeartPulse, ShieldCheck, Mail } from 'lucide-react';
+import { HeartPulse, ShieldCheck } from 'lucide-react';
 
 export default function Login() {
-  const [role, setRole] = useState<'owner' | 'vet'>('owner');
+  const [searchParams] = useSearchParams();
+  const initialRole = searchParams.get('role') === 'vet' ? 'vet' : 'owner';
+  const [role, setRole] = useState<'owner' | 'vet'>(initialRole);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const r = searchParams.get('role');
+    if (r === 'vet' || r === 'owner') {
+      setRole(r);
+    }
+  }, [searchParams]);
 
   const handleGoogleLogin = async () => {
     setLoading(true);
